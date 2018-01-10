@@ -20,10 +20,10 @@ library('RColorBrewer')
 ## assigning twitter credentials
 
 ```{r}
-key='50PGLiLLdLMpK3u9V5s6BKL4P'
-secret='6BbBGc7Ep65sIsCeW1ofJCcPZ36xjGawEe4LercN7u4FUCDYi1'
-mytoken='496454062-DBEc6mcugGzQIsODZQOWhkcmbdrGjoGPu4TBka77'
-secrettk='hOlSEo5527Dznus0X9lG8oTui4tdcIFvWO7hILkJ55UXF'
+key='your key'
+secret='your secret'
+mytoken='your token'
+secrettk='your secret tk'
 ```
 
 ## set up twitter authorization path
