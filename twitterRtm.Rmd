@@ -1,0 +1,93 @@
+---
+title: "Rtextmining"
+author: "ChenW"
+date: "1/10/2018"
+output: html_document
+---
+
+## import necessary libraries
+
+```{r}
+library('twitteR')
+library('httr')
+library('tm')
+library('ROAuth')
+library('SnowballC')
+library("wordcloud")
+library('RColorBrewer')
+```
+
+## assigning twitter credentials
+
+```{r}
+key='50PGLiLLdLMpK3u9V5s6BKL4P'
+secret='6BbBGc7Ep65sIsCeW1ofJCcPZ36xjGawEe4LercN7u4FUCDYi1'
+mytoken='496454062-DBEc6mcugGzQIsODZQOWhkcmbdrGjoGPu4TBka77'
+secrettk='hOlSEo5527Dznus0X9lG8oTui4tdcIFvWO7hILkJ55UXF'
+```
+
+## set up twitter authorization path
+
+```{r}
+setup_twitter_oauth(key,secret,mytoken,secrettk)
+```
+
+## search twitter and scrape first 10000 twitts starting from Jan 1st 2018 that mentions 'innovation'
+
+```{r}
+test=searchTwitter('innovation', n=10000, since='2018-1-01', lang='en' #, geocode='40.744939,-73.976998,0.5mi'
+                   )
+```
+
+## apply getText function
+
+```{r}
+testlist<-sapply(test,function(x) x$getText())
+```
+
+## clean text data and generate a word cloud
+
+```{r}
+tcorpus <- Corpus(VectorSource(testlist))
+tcorpus <- tm_map(tcorpus, content_transformer(function(x) iconv(x, to='UTF-8-MAC', sub='byte')), mc.cores=1)
+
+inno <- tm_map(tcorpus, content_transformer(tolower))
+inno <- tm_map(inno, content_transformer(removePunctuation))
+inno <- tm_map(inno,content_transformer(function(x) removeWords(x,stopwords())))
+inno <- tm_map(inno,content_transformer(PlainTextDocument))
+
+wordcloud(inno, min.freq=4, scale=c(5,1),
+          random.color=F, max.word=45, random.order=F)
+```
+## get term document matrix
+
+```{r}
+testtm<-TermDocumentMatrix(tcorpus)
+testtm
+```
+
+## get most frequent words
+
+```{r}
+findFreqTerms(testtm,lowfreq = 55)
+```
+
+## find most associated terms with a specified word
+
+```{r}
+findAssocs(testtm,'car',0.4)
+```
+
+## create dendrogram
+
+```{r}
+tdm<-removeSparseTerms(testtm,sparse=0.93)
+tdmscale<-scale(tdm)
+dist <- dist(tdmscale, method = "canberra")
+
+
+par(mai=c(1,1.2,1.0,0.5))
+plot(fit,xlab="",sub="",col.main="salmon")
+```
+
+
